@@ -19,4 +19,12 @@ print(filename)
 print(output_name)
 
 
+filigrane = input('Enter Filigrane : ')
+mdp = getpass.getpass(prompt='Enter Encryption Password : ')
+reditt = getpass.getpass(prompt='Again Same Password : ')
 
+if mdp != reditt :
+    print("Not the same !")
+    exit(1)
+else:
+    reditt = None
