@@ -1,0 +1,75 @@
+Structure du Projet Python et Bibliothèques
+
+Pour ce projet, un seul fichier script est suffisant pour contenir toute la logique.
+
+1. Structure des Fichiers
+
+Je vous recommande la structure suivante, très simple :
+
+Projet_Chiffrement/
+│
+└── 🔒 encrypt_tool.py    <-- Votre unique fichier de script Python
+
+
+Ce fichier encrypt_tool.py contiendra :
+
+Les imports de toutes les bibliothèques listées ci-dessous.
+
+La fonction chiffrer(fichier_entree, fichier_sortie, mot_de_passe) (comme décrit dans la section 4 du plan).
+
+La fonction dechiffrer(fichier_entree, fichier_sortie, mot_de_passe) (comme décrit dans la section 5 du plan).
+
+Le bloc principal if __name__ == "__main__": qui gérera l'interface utilisateur en ligne de commande (la section 6 du plan).
+
+2. Bibliothèques Python Requises
+
+Voici la liste des bibliothèques nécessaires, qui doivent être importées en haut de votre fichier encrypt_tool.py.
+
+A. Bibliothèque Externe (à installer)
+
+Il n'y en a qu'une, mais elle est essentielle.
+
+cryptography
+
+Pourquoi ? C'est la bibliothèque de référence pour la cryptographie en Python. Nous l'utiliserons pour :
+
+PBKDF2HMAC (Dérivation de la clé à partir du mot de passe).
+
+AESGCM (L'algorithme de chiffrement et d'authentification).
+
+SHA256 (L'algorithme de hachage pour PBKDF2).
+
+InvalidTag (L'exception pour gérer les mots de passe incorrects).
+
+Installation :
+
+pip install cryptography
+
+
+B. Modules Intégrés (inclus dans Python)
+
+Vous n'avez pas besoin d'installer ceux-ci, juste de les importer.
+
+os
+
+Pourquoi ? Pour générer des données aléatoires cryptographiquement sûres.
+
+Fonction clé : os.urandom(N) (pour créer le Sel et le Nonce).
+
+getpass
+
+Pourquoi ? Pour demander un mot de passe à l'utilisateur de manière sécurisée (sans l'afficher à l'écran).
+
+Fonction clé : getpass.getpass("Votre message : ").
+
+argparse
+
+Pourquoi ? Pour créer l'interface en ligne de commande (ex: python encrypt_tool.py --chiffrer ...).
+
+Fonction clé : argparse.ArgumentParser().
+
+sys
+
+Pourquoi ? C'est une bonne pratique pour gérer les sorties du script, notamment en cas d'erreur.
+
+Fonction clé : sys.exit(1) (pour quitter le programme en cas d'erreur, ex: mot de passe incorrect).
