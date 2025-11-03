@@ -1,75 +1,80 @@
-Structure du Projet Python et Bibliothèques
+Structure du Projet Python et Bibliothèques (Mis à jour)
 
-Pour ce projet, un seul fichier script est suffisant pour contenir toute la logique.
+Le projet sera divisé en deux scripts distincts pour répondre à votre besoin de sécurité : un pour vous (chiffrement) et un pour vos destinataires (déchiffrement).
 
 1. Structure des Fichiers
 
-Je vous recommande la structure suivante, très simple :
+Voici la nouvelle structure :
 
 Projet_Chiffrement/
 │
-└── 🔒 encrypt_tool.py    <-- Votre unique fichier de script Python
+├── 🔒 encrypt.py    <-- L'outil de chiffrement (pour vous uniquement)
+│
+└── 🔑 decrypt.py    <-- L'outil de déchiffrement (à distribuer)
 
 
-Ce fichier encrypt_tool.py contiendra :
+encrypt.py contiendra la logique pour :
 
-Les imports de toutes les bibliothèques listées ci-dessous.
+Demander le fichier PDF d'origine.
 
-La fonction chiffrer(fichier_entree, fichier_sortie, mot_de_passe) (comme décrit dans la section 4 du plan).
+Demander le mot de passe (ex: AstierAuRapport!).
 
-La fonction dechiffrer(fichier_entree, fichier_sortie, mot_de_passe) (comme décrit dans la section 5 du plan).
+Demander le texte du filigrane (Watermark) (ex: Pour Astier).
 
-Le bloc principal if __name__ == "__main__": qui gérera l'interface utilisateur en ligne de commande (la section 6 du plan).
+(MIS À JOUR) Créer une version temporaire du PDF qui inclut :
+
+Le filigrane (Watermark) ajouté sur chaque page.
+
+Les permissions PDF définies sur "lecture seule" (interdiction de modification, de copie et d'impression).
+
+Chiffrer ce PDF temporaire sécurisé avec le mot de passe (en utilisant la cryptographie AES).
+
+Supprimer le PDF temporaire.
+
+decrypt.py contiendra uniquement la logique pour :
+
+Demander le fichier chiffré (.enc).
+
+Demander le mot de passe.
+
+Déchiffrer le fichier. (Le PDF résultant sera en lecture seule et portera le filigrane).
 
 2. Bibliothèques Python Requises
 
-Voici la liste des bibliothèques nécessaires, qui doivent être importées en haut de votre fichier encrypt_tool.py.
+La liste s'allonge d'une bibliothèque pour gérer les PDF.
 
-A. Bibliothèque Externe (à installer)
+A. Bibliothèques Externes (à installer)
 
-Il n'y en a qu'une, mais elle est essentielle.
+Vous devrez installer ces deux bibliothèques :
 
 cryptography
 
-Pourquoi ? C'est la bibliothèque de référence pour la cryptographie en Python. Nous l'utiliserons pour :
+Pourquoi ? Pour le chiffrement sécurisé (AES-GCM, PBKDF2). C'est le cœur de notre sécurité.
 
-PBKDF2HMAC (Dérivation de la clé à partir du mot de passe).
+Installation : pip install cryptography
 
-AESGCM (L'algorithme de chiffrement et d'authentification).
+PyPDF2
 
-SHA256 (L'algorithme de hachage pour PBKDF2).
+Pourquoi ? C'est la bibliothèque qui nous permettra de lire votre PDF, d'y ajouter un "Watermark" (filigrane) ET de définir les autorisations de sécurité (lecture seule) avant de le chiffrer.
 
-InvalidTag (L'exception pour gérer les mots de passe incorrects).
-
-Installation :
-
-pip install cryptography
-
+Installation : pip install PyPDF2
 
 B. Modules Intégrés (inclus dans Python)
 
-Vous n'avez pas besoin d'installer ceux-ci, juste de les importer.
+Ces modules seront utilisés dans les deux scripts (encrypt.py et decrypt.py).
 
 os
 
-Pourquoi ? Pour générer des données aléatoires cryptographiquement sûres.
-
-Fonction clé : os.urandom(N) (pour créer le Sel et le Nonce).
+Pourquoi ? Pour générer le "Sel" et le "Nonce" aléatoires.
 
 getpass
 
-Pourquoi ? Pour demander un mot de passe à l'utilisateur de manière sécurisée (sans l'afficher à l'écran).
-
-Fonction clé : getpass.getpass("Votre message : ").
+Pourquoi ? Pour demander les mots de passe de manière sécurisée (sans les afficher).
 
 argparse
 
-Pourquoi ? Pour créer l'interface en ligne de commande (ex: python encrypt_tool.py --chiffrer ...).
-
-Fonction clé : argparse.ArgumentParser().
+Pourquoi ? Pour gérer les arguments de la ligne de commande (ex: python decrypt.py fichier.enc sortie.pdf).
 
 sys
 
-Pourquoi ? C'est une bonne pratique pour gérer les sorties du script, notamment en cas d'erreur.
-
-Fonction clé : sys.exit(1) (pour quitter le programme en cas d'erreur, ex: mot de passe incorrect).
+Pourquoi ? Pour gérer les messages d'erreur et quitter proprement le script.
