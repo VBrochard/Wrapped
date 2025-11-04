@@ -33,22 +33,56 @@ def watermark(
     with open(pdf_result, "wb") as fp:
         writer.write(fp)
 
+
+def verifCheminExis(content_file, stamp_file):
+    content_path = Path(content_file)
+    stamp_path = Path(stamp_file)
+    if not content_path.exists() or not content_path.is_file():
+        raise FileNotFoundError(
+            print("Fichier cible non trouvée")
+        )
+    if content_path.suffix.lower() != '.pdf':
+        raise ValueError(
+            print("Fichier cible non PDF")
+        )
+    if not stamp_path.exists() or stamp_path.suffix.lower() != '.pdf':
+        raise ValueError(
+            print("Filigrane incorrecte")
+        )
+
 parser =  argparse.ArgumentParser()
 
 parser.add_argument('name',type=str)
+parser.add_argument('watermarkPath',type=str)
 parser.add_argument('output',type=str)
 
+
 filename = parser.parse_args().name
+chemin_watermark = parser.parse_args().watermarkPath
 output_name = parser.parse_args().output
 
-filigrane = input('Enter Filigrane : ')
+try:
+        print("Validation des chemins...")
+        verifCheminExis(filename, chemin_watermark)
+except FileNotFoundError as e:
+        print(e)
+        sys.exit(1) 
+except ValueError as e:
+        print(e)
+        sys.exit(1)
+
+# filigrane = input('Enter Filigrane : ')   on verra après pour le générer de manière personnalisé
+
+print("\n")
 mdp = getpass.getpass(prompt='Enter Encryption Password : ')
 reditt = getpass.getpass(prompt='Again Same Password : ')
 
-if mdp != reditt :
-    print("Not the same !")
-    sys.exit()
-else:
-    reditt = None
 
-watermark(filename,"watermark.pdf","watermarker.pdf","ALL")
+if mdp != reditt :
+    while mdp != reditt :
+        print("\nNot the same !\n")
+        mdp = getpass.getpass(prompt='Enter Encryption Password : ')
+        reditt = getpass.getpass(prompt='Again Same Password : ')
+
+reditt = None
+watermark(filename,chemin_watermark,output_name,"ALL")
