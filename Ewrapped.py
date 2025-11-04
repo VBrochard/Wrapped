@@ -62,7 +62,6 @@ chemin_watermark = parser.parse_args().watermarkPath
 output_name = parser.parse_args().output
 
 try:
-        print("Validation des chemins...")
         verifCheminExis(filename, chemin_watermark)
 except FileNotFoundError as e:
         print(e)
@@ -73,14 +72,14 @@ except ValueError as e:
 
 # filigrane = input('Enter Filigrane : ')   on verra après pour le générer de manière personnalisé
 
-print("\n")
+print("\nChemin et nom de fichier valide")
 mdp = getpass.getpass(prompt='Enter Encryption Password : ')
 reditt = getpass.getpass(prompt='Again Same Password : ')
 
 
 if mdp != reditt :
     while mdp != reditt :
-        print("\nNot the same !\n")
+        print("\nNot the same !")
         mdp = getpass.getpass(prompt='Enter Encryption Password : ')
         reditt = getpass.getpass(prompt='Again Same Password : ')
 
