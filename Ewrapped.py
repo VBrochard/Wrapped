@@ -1,11 +1,20 @@
 import argparse
-import cryptography 
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives import hashes
 import os
 import sys
 from pypdf import PdfReader, PdfWriter
 from typing import Union,Literal,List
 from pathlib import Path
 import getpass
+
+SALT_LENGTH = 16
+NONCE_LENGTH = 12
+KEY_LENGTH = 32
+TAG_LENGTH = 16
+ITERATIONS = 650000 
+
 
 
 def watermark(content_pdf: Path, stamp_pdf: Path, pdf_result: Path, page_indices: Union[Literal["ALL"], List[int]] = "ALL"):
@@ -42,6 +51,33 @@ def verifCheminExis(content_file, stamp_file):
         )
 
 
+def derive_key(password,salt):
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=KEY_LENGTH,
+        salt = salt,
+        iterations = ITERATIONS)
+    return kdf.derive(password.encode())
+
+def encryptFile(input,output,password):
+    input_path = Path(input)
+    output_path = Path(output)
+    watermark(filename,chemin_watermark,output_name,"ALL")
+    salt = os.urandom(SALT_LENGTH)
+    nonce = os.urandom(NONCE_LENGTH)
+    key = derive_key(password,salt)
+    with open(input_path, 'rb') as f:
+        file_data = f.read()
+    aesgcm = AESGCM(key)
+    ciphertext_with_tag = aesgcm.encrypt(nonce, file_data, None)
+    tag = ciphertext_with_tag[-TAG_LENGTH:]
+    ciphertext = ciphertext_with_tag[:-TAG_LENGTH]
+    with open(output_path, 'wb') as f:
+        f.write(salt)
+        f.write(nonce)
+        f.write(tag)
+        f.write(ciphertext)
+
 parser =  argparse.ArgumentParser()
 
 parser.add_argument('name',type=str)
@@ -76,4 +112,5 @@ if mdp != reditt :
         reditt = getpass.getpass(prompt='Again Same Password : ')
 
 reditt = None
-watermark(filename,chemin_watermark,output_name,"ALL")
+
+encryptFile(filename,output_name,mdp)
