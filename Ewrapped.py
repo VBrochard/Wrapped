@@ -30,7 +30,7 @@ def watermark(content_pdf: Path, stamp_pdf: Path, pdf_result: Path, page_indices
         image_page.merge_page(content_page)
         image_page.mediabox = mediabox
         writer.add_page(image_page)
-    writer.encrypt(user_password="",owner_password=os.urandom(32).hex(),use_128bit=True)
+    writer.encrypt(user_password="", owner_password=os.urandom(32).hex(), permissions_flag=-3900, use_128bit=True)
     with open(pdf_result, "wb") as fp:
         writer.write(fp)
 
